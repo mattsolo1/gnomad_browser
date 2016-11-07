@@ -32,8 +32,11 @@ const addNested = (next, variant, field) => {
 const combineVariantData = R.curry((fields, variants) => R.reduce((acc, variant) => {
   const { variant_id } = variant
   const next = { ...acc[variant_id] }
-  fields.constantFields.forEach(field =>
-    next[field] = variant[field])
+  // Use ExAC constant fields if available
+  if (!next['datasets'] && variant.dataset !== 'gnomAD') {
+    fields.constantFields.forEach(field =>
+      next[field] = variant[field])
+  }
   fields.sumFields.forEach(field =>
     next[field] = add(next, variant, field))
   fields.nestedSumFields.forEach(field =>
